@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intellectual Thoughts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding: 3rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa, #93c5fd);
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #1e293b;
+            margin-bottom: 1rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 1.125rem;
+        }
+
+        .messages {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            max-width: 400px;
+            z-index: 1000;
+        }
+
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+            background: white;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            animation: slideIn 0.3s ease-out;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .alert::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            animation: countdown 5s linear forwards;
+        }
+
+        .alert.success {
+            border-left: 4px solid #22c55e;
+            background: rgba(240, 253, 244, 0.95);
+        }
+
+        .alert.error {
+            border-left: 4px solid #ef4444;
+            background: rgba(254, 242, 242, 0.95);
+        }
+
+        .alert.warning {
+            border-left: 4px solid #f59e0b;
+            background: rgba(255, 247, 237, 0.95);
+        }
+
+        .alert.info {
+            border-left: 4px solid #3b82f6;
+            background: rgba(239, 246, 255, 0.95);
+        }
+
+        .alert-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .alert-close {
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            opacity: 0.7;
+        }
+
+        .alert-close:hover {
+            opacity: 1;
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        @keyframes countdown {
+            from {
+                width: 100%;
+            }
+
+            to {
+                width: 0%;
+            }
+        }
+
+        .blog-form {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .blog-form::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .blog-form:hover {
+            transform: translateY(-4px);
+        }
+
+        .blog-form:hover::before {
+            opacity: 1;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #60a5fa;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        textarea {
+            height: 200px;
+            resize: vertical;
+            line-height: 1.7;
+        }
+
+        .submit-btn {
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .blog-list {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .blog-item {
+            padding: 2rem;
+            border-bottom: 2px solid #f1f5f9;
+            transition: all 0.3s ease;
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .blog-item:hover {
+            background: #f8fafc;
+            transform: translateX(4px);
+        }
+
+        .blog-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .blog-title {
+            font-size: 1.5rem;
+            color: #1e293b;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            line-height: 1.4;
+        }
+
+        .blog-content {
+            color: #64748b;
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+            font-size: 1.05rem;
+        }
+
+        .blog-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .edit-btn,
+        .delete-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .edit-btn {
+            background: #22c55e;
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background: #16a34a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+        }
+
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .header {
+                padding: 2rem;
+                margin-bottom: 2rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .blog-form,
+            .blog-list {
+                padding: 1.5rem;
+            }
+
+            .blog-item {
+                padding: 1.5rem;
+            }
+
+            .blog-title {
+                font-size: 1.25rem;
+            }
+
+            .messages {
+                left: 20px;
+                right: 20px;
+                max-width: none;
+            }
+
+            .edit-btn,
+            .delete-btn {
+                padding: 0.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert {{ message.tags }}">
+            <div class="alert-content">
+                {% if message.tags == 'success' %}
+                <svg class="alert-icon" fill="none" stroke="#22c55e" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                {% elif message.tags == 'error' %}
+                <svg class="alert-icon" fill="none" stroke="#ef4444" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+                {% elif message.tags == 'warning' %}
+                <svg class="alert-icon" fill="none" stroke="#f59e0b" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                    </path>
+                </svg>
+                {% else %}
+                <svg class="alert-icon" fill="none" stroke="#3b82f6" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                {% endif %}
+                <span>{{ message }}</span>
+            </div>
+            <button class="alert-close" onclick="this.parentElement.remove()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="container">
+        <header class="header">
+            <h1>✨ Intellectual Thoughts</h1>
+            <p>Share your insights and ideas with the world</p>
+        </header>
+
+        <section class="blog-form">
+            <h2>Create New Post</h2>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" name="title" placeholder="What's on your mind?" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Content</label>
+                    <textarea id="description" name="description" placeholder="Share your thoughts in detail..."
+                        required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">
+                    Share Your Thoughts
+                </button>
+            </form>
+        </section>
+
+        <section class="blog-list">
+            <h2>Your Thoughts</h2>
+            {% for i in Content %}
+            <article class="blog-item">
+                <h3 class="blog-title">{{i.title}}</h3>
+                <p class="blog-content">{{i.description|truncatewords:20}}</p>
+                <div class="blog-actions">
+                    <a href="update/{{i.id}}/" class="edit-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                        Edit
+                    </a>
+                    <a href="delete/{{i.id}}/" class="delete-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Delete
+                    </a>
+                </div>
+            </article>
+            {% endfor %}
+        </section>
+    </div>
+
+    <script>
+        // Auto-dismiss alerts after 5 seconds
+        document.querySelectorAll('.alert').forEach(alert => {
+            setTimeout(() => {
+                if (alert.parentElement) {
+                    alert.style.animation = 'slideOut 0.3s ease-out forwards';
+                    setTimeout(() => alert.remove(), 300);
+                }
+            }, 5000);
+        });
+
+        // Add smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Add form submission feedback
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function (e) {
+            const submitBtn = this.querySelector('.submit-btn');
+            submitBtn.textContent = 'Sharing...';
+            submitBtn.style.opacity = '0.7';
+        });
+
+        // Add dynamic textarea height
+        const textarea = document.querySelector('textarea');
+        textarea.addEventListener('input', function () {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+
+        // Add hover effect for blog items
+        document.querySelectorAll('.blog-item').forEach(item => {
+            item.addEventListener('mouseenter', function () {
+                this.style.transform = 'translateX(4px)';
+            });
+            item.addEventListener('mouseleave', function () {
+                this.style.transform = 'translateX(0)';
+            });
+        });
+    </script>
+</body>
+
+</html>

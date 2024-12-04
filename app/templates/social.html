@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlogSocial - Your Blog Community</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+        }
+
+        .top-bar {
+            background-color: #ffffff;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1877f2;
+        }
+
+        .top-icons {
+            display: flex;
+            gap: 20px;
+        }
+
+        .icon {
+            font-size: 20px;
+            color: #606770;
+            cursor: pointer;
+        }
+
+        .main-content {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .post {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-author {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .post-content {
+            margin-bottom: 15px;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #e4e6eb;
+            padding-top: 10px;
+        }
+
+        .action-button {
+            background: none;
+            border: none;
+            color: #606770;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 5px 10px;
+        }
+
+        .action-button:hover {
+            background-color: #f2f2f2;
+            border-radius: 4px;
+        }
+
+        .settings {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+
+        .settings-menu {
+            display: none;
+            position: absolute;
+            bottom: 60px;
+            right: 0;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            padding: 10px;
+        }
+
+        .settings-menu button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: none;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .settings-menu button:hover {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-bar">
+        <div class="logo">BlogSocial</div>
+        <div class="top-icons">
+            <span class="icon" id="search-icon">🔍</span>
+            <span class="icon" id="notification-icon">🔔</span>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="post">
+            <div class="post-author">John Doe</div>
+            <div class="post-content">
+                Just finished writing my latest blog post on the future of AI. Check it out and let me know your
+                thoughts!
+            </div>
+            <div class="post-actions">
+                <button class="action-button like-button">👍 Like</button>
+                <button class="action-button">💬 Comment</button>
+                <button class="action-button">📤 Share</button>
+            </div>
+        </div>
+
+        <div class="post">
+            <div class="post-author">Jane Smith</div>
+            <div class="post-content">
+                Exploring the hidden gems of Paris in my new travel blog. Who's been to Paris recently?
+            </div>
+            <div class="post-actions">
+                <button class="action-button like-button">👍 Like</button>
+                <button class="action-button">💬 Comment</button>
+                <button class="action-button">📤 Share</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="settings" id="settings-button">⚙️
+        <div class="settings-menu" id="settings-menu">
+            <button id="login-button">Login</button>
+            <button id="logout-button">Logout</button>
+        </div>
+    </div>
+
+    <script>
+        // Toggle settings menu
+        const settingsButton = document.getElementById('settings-button');
+        const settingsMenu = document.getElementById('settings-menu');
+        let isSettingsOpen = false;
+
+        settingsButton.addEventListener('click', () => {
+            isSettingsOpen = !isSettingsOpen;
+            settingsMenu.style.display = isSettingsOpen ? 'block' : 'none';
+        });
+
+        // Close settings menu when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!settingsButton.contains(event.target) && isSettingsOpen) {
+                isSettingsOpen = false;
+                settingsMenu.style.display = 'none';
+            }
+        });
+
+        // Like functionality
+        const likeButtons = document.querySelectorAll('.like-button');
+        likeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                button.textContent = button.textContent.includes('Liked')
+                    ? '👍 Like'
+                    : '👍 Liked';
+            });
+        });
+
+        // Login/Logout functionality (simulated)
+        const loginButton = document.getElementById('login-button');
+        const logoutButton = document.getElementById('logout-button');
+        let isLoggedIn = false;
+
+        loginButton.addEventListener('click', () => {
+            alert('Logged in successfully!');
+            isLoggedIn = true;
+            updateAuthButtons();
+        });
+
+        logoutButton.addEventListener('click', () => {
+            alert('Logged out successfully!');
+            isLoggedIn = false;
+            updateAuthButtons();
+        });
+
+        function updateAuthButtons() {
+            loginButton.style.display = isLoggedIn ? 'none' : 'block';
+            logoutButton.style.display = isLoggedIn ? 'block' : 'none';
+        }
+
+        // Initialize auth buttons
+        updateAuthButtons();
+
+        // Search functionality (simulated)
+        const searchIcon = document.getElementById('search-icon');
+        searchIcon.addEventListener('click', () => {
+            const searchQuery = prompt('Enter your search query:');
+            if (searchQuery) {
+                alert(`Searching for: ${searchQuery}`);
+                // Here you would typically send the search query to a server
+            }
+        });
+
+        // Notification functionality (simulated)
+        const notificationIcon = document.getElementById('notification-icon');
+        notificationIcon.addEventListener('click', () => {
+            alert('You have 3 new notifications!');
+            // Here you would typically fetch and display actual notifications
+        });
+    </script>
+</body>
+
+</html>
