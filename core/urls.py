@@ -26,7 +26,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('user-site/', ContentView.as_view(),name = 'user-site'),
     path('user-site/update/<int:id>/', Update_View.as_view(),name='update'),
-    path('user-site/delete/<int:id>/', delete_page,name ='delete')
+    path('user-site/delete/<int:id>/', delete_page,name ='delete'),
+    path('login-page/', Loginpage.as_view(),name='login-page'),
+    path('sign-up/',SignUp.as_view(), name = 'sign-up'),
+    path('logout/',log_out,name='logout')
 ]
 
 if settings.DEBUG:

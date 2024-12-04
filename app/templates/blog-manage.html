@@ -400,7 +400,27 @@
 </head>
 
 <body>
-    {% if messages %}
+    <a href="/logout" class="logout-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 10l4-4m0 0l-4-4m4 4H3m10 4H3" />
+        </svg>
+        Logout
+    </a>
+    <div class="messages">
+        {% if user.is_authenticated %}
+        <!-- Display the alert box when the user is authenticated -->
+        <div class="alert">
+            <div class="alert-content">
+                <svg class="alert-icon" fill="none" stroke="#22c55e" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <!-- Display the user's name in the alert box -->
+                <p>Hello, {{ user.username }}! You are logged in.</p>
+            </div>
+        </div>
+        {% endif %}
+    </div> {% if messages %}
     <div class="messages">
         {% for message in messages %}
         <div class="alert {{ message.tags }}">
