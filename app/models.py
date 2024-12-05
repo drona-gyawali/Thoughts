@@ -21,6 +21,7 @@ class Content(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE,null=True,blank=True)
     title = models.CharField(max_length=150, null=False,blank =False)
     description = models.TextField(null= False, blank = False)
+    email= models.EmailField(unique=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:

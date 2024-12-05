@@ -29,7 +29,8 @@ urlpatterns = [
     path('user-site/delete/<int:id>/', delete_page,name ='delete'),
     path('login-page/', Loginpage.as_view(),name='login-page'),
     path('sign-up/',SignUp.as_view(), name = 'sign-up'),
-    path('logout/',log_out,name='logout')
+    path('logout/',log_out,name='logout'),
+    path('forget-password/',forget_password.as_view(),name ='forget-password')
 ]
 
 if settings.DEBUG:
