@@ -30,7 +30,9 @@ urlpatterns = [
     path('login-page/', Loginpage.as_view(),name='login-page'),
     path('sign-up/',SignUp.as_view(), name = 'sign-up'),
     path('logout/',log_out,name='logout'),
-    path('forget-password/',forget_password.as_view(),name ='forget-password')
+    path('forget-password/',forget_password.as_view(),name ='forget-password'),
+    path('verify-otp/',Otpverfication.as_view(), name = 'verify-otp'),
+    path('reset-password/<username>/',ResetPassword.as_view(),name ='reset-password')
 ]
 
 if settings.DEBUG:

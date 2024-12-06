@@ -264,15 +264,17 @@ class forget_password(View):
             email = data.get("email")
         
         # user verification for otp
-        if not User.objects.filter(username=username,email=email).exists:
-            messages.error(request, f'Username or email does not exist')
+        if not User.objects.filter(username=username,email=email).exists():
+            messages.error(request, 'Username or email does not exist')
             return render(request,self.template_name)
         
         # fx to generate 4 digit Otp
         otp = generate_otp()
 
-        # storing the otp in sessions
+        # storing the otp and usrname in sessions
         request.session['otp']=otp
+        request.session['username']=username
+
 
         # Sending the otp to vaild user
         send_mail(
@@ -283,7 +285,7 @@ class forget_password(View):
             recipient_list=[email],
             fail_silently=False,
         )
-
+        
         return redirect('verify-otp')
     
 
@@ -292,7 +294,7 @@ class Otpverfication(View):
     """
     CBV: Handle GET and POST Request
     """
-    template_name = 'forget_password.html'
+    template_name = 'verify-otp.html'
 
     def get(self,request):
         """
@@ -304,26 +306,91 @@ class Otpverfication(View):
         """
         Handle the POST requst and verify the session stored otp
         """
-        data = request.post
-        otp = data.get("otp")
+        data = request.POST
+
+        # geting the user input otp
+        otp = "".join([
+            data.get("otp1", ""),
+            data.get("otp2", ""),
+            data.get("otp3", ""),
+            data.get("otp4", "")
+        ])
 
         # check email otp against session
 
         session_otp = request.session.get('otp')
 
-        print(session_otp)
 
         if session_otp != otp:
-            message.error(request,"OTP Verification failed.")
+            messages.error(request,"OTP Verification failed.")
             return render(request,self.template_name)
         
-        # otp matches del otp from sessions
-        del request.session['otp']
+        #get the username form session
+        username=request.session.get('username')
+        
 
-        return redirect('login-page') # for sure i will the login-page to reset password.
+        return redirect('reset-password',username=username) 
+    
+    
+# CBV : Handle  reset password request.
+class ResetPassword(View):
+    """
+    Handle get and post request and reset the password of user.
+    """
+    template_name = 'reset_password.html'
+
+    def get(self,request,username):
+        """
+        render the page.
+        """
+
+        # ensure user has the otp: flag for unothorized access
+        if not request.session.get('otp'):
+            return redirect('login-page')
 
 
-# setup the new forgetpage and verify page and reset-page then proceed the rest.
+        queryset = User.objects.get(username = username)
+
+
+        context = {'username': queryset}
+
+        return render(request, self.template_name, context)
+    
+    def post(self,request,username):
+        """
+        Handle POST Logic.
+        """
+
+        user = User.objects.get(username=username)
+
+        data = request.POST
+        password = data.get('new-password')
+        confirm_password = data.get('confirm-password')
+
+        # check if password is correct
+        if password != confirm_password:
+            messages.error(request,'Password_doesnot match')
+            return render(request,self.template_name)
+        
+        user.set_password(password)
+        user.save()
+
+        #clear session data
+        request.session.pop('otp',None)
+        request.session.pop('username',None)
+
+        return redirect('login-page',)
+
+# making the social interface for the user to interact with the usercreated content
+        
+
+
+
+
+
+
+
+
 
 
         
