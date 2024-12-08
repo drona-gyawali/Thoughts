@@ -4,239 +4,381 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BlogSocial - Your Blog Community</title>
+    <title>Thoughts - Social Platform</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f2f5;
+        :root {
+            --primary: #4f46e5;
+            --bg-light: #ffffff;
+            --text-light: #1f2937;
+            --bg-dark: #111827;
+            --text-dark: #f3f4f6;
         }
 
-        .top-bar {
-            background-color: #ffffff;
-            padding: 10px 20px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-light);
+        }
+
+        body.dark-mode {
+            background-color: var(--bg-dark);
+            color: var(--text-dark);
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem 2rem;
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid #e5e7eb;
+            z-index: 100;
+        }
+
+        .dark-mode .header {
+            background-color: rgba(17, 24, 39, 0.8);
+            border-bottom: 1px solid #374151;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .logo {
-            font-size: 24px;
+            font-size: 1.5rem;
             font-weight: bold;
-            color: #1877f2;
+            color: var(--primary);
         }
 
-        .top-icons {
+        .search-bar {
+            flex: 1;
+            max-width: 400px;
+            margin: 0 2rem;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.5rem 2.5rem;
+            border-radius: 9999px;
+            border: 1px solid #e5e7eb;
+            background-color: #f9fafb;
+            outline: none;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+            pointer-events: none;
+        }
+
+        .dark-mode .search-input {
+            background-color: #1f2937;
+            border-color: #374151;
+            color: var(--text-dark);
+        }
+
+        .header-actions {
             display: flex;
-            gap: 20px;
+            gap: 1rem;
+            align-items: center;
         }
 
-        .icon {
-            font-size: 20px;
-            color: #606770;
+        .icon-btn {
+            background: none;
+            border: none;
             cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            color: inherit;
+        }
+
+        .icon-btn:hover {
+            background-color: #f3f4f6;
+        }
+
+        .dark-mode .icon-btn:hover {
+            background-color: #374151;
         }
 
         .main-content {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
+            max-width: 800px;
+            margin: 5rem auto 2rem;
+            padding: 1rem;
         }
 
         .post {
-            background-color: #ffffff;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            background-color: var(--bg-light);
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb;
+            padding: 1rem;
+            margin-bottom: 1rem;
         }
 
-        .post-author {
-            font-weight: bold;
-            margin-bottom: 10px;
+        .dark-mode .post {
+            background-color: #1f2937;
+            border-color: #374151;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 1rem;
+            object-fit: cover;
         }
 
         .post-content {
-            margin-bottom: 15px;
+            margin-bottom: 1rem;
+            line-height: 1.5;
         }
 
         .post-actions {
             display: flex;
-            justify-content: space-between;
-            border-top: 1px solid #e4e6eb;
-            padding-top: 10px;
+            gap: 1rem;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 1rem;
         }
 
-        .action-button {
-            background: none;
-            border: none;
-            color: #606770;
-            cursor: pointer;
-            font-size: 14px;
-            padding: 5px 10px;
+        .dark-mode .post-actions {
+            border-color: #374151;
         }
 
-        .action-button:hover {
-            background-color: #f2f2f2;
-            border-radius: 4px;
-        }
-
-        .settings {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #ffffff;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
+        .action-btn {
             display: flex;
-            justify-content: center;
             align-items: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
-        }
-
-        .settings-menu {
-            display: none;
-            position: absolute;
-            bottom: 60px;
-            right: 0;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            padding: 10px;
-        }
-
-        .settings-menu button {
-            display: block;
-            width: 100%;
-            padding: 10px;
+            gap: 0.5rem;
             background: none;
             border: none;
-            text-align: left;
+            color: inherit;
             cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
         }
 
-        .settings-menu button:hover {
-            background-color: #f2f2f2;
+        .action-btn:hover {
+            background-color: #f3f4f6;
+        }
+
+        .dark-mode .action-btn:hover {
+            background-color: #374151;
+        }
+
+        .comment-section {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .comment-section.active {
+            display: block;
+        }
+
+        .comment-form {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .comment-input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.25rem;
+            background-color: var(--bg-light);
+            color: var(--text-light);
+        }
+
+        .post-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .post-btn:hover {
+            opacity: 0.9;
+        }
+
+        .dark-mode .comment-input {
+            background-color: #1f2937;
+            border-color: #374151;
+            color: var(--text-dark);
+        }
+
+        .error-toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: #ef4444;
+            color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .get-started {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 9999px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 
 <body>
-    <div class="top-bar">
-        <div class="logo">BlogSocial</div>
-        <div class="top-icons">
-            <span class="icon" id="search-icon">🔍</span>
-            <span class="icon" id="notification-icon">🔔</span>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">Thoughts</div>
+            <form>
+                <div class="search-bar">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" name="search_me" class="search-input" placeholder="Search users...">
+                </div>
+            </form>
+            <div class="header-actions">
+                <button class="icon-btn" id="notificationBtn" title="Notifications">
+                    🔔
+                </button>
+                <button class="icon-btn" id="darkModeBtn" title="Toggle dark mode">
+                    🌙
+                </button>
+            </div>
         </div>
-    </div>
+    </header>
 
-    <div class="main-content">
+    <main class="main-content">
+        {%for i in content %}
         <div class="post">
-            <div class="post-author">John Doe</div>
+            <div class="post-header">
+                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&h=80"
+                    alt="User Avatar" class="avatar">
+                <div>
+                    <h3>John Doe</h3>
+                    <small>2 hours ago</small>
+                </div>
+            </div>
             <div class="post-content">
-                Just finished writing my latest blog post on the future of AI. Check it out and let me know your
-                thoughts!
+                {{i.description}}
             </div>
             <div class="post-actions">
-                <button class="action-button like-button">👍 Like</button>
-                <button class="action-button">💬 Comment</button>
-                <button class="action-button">📤 Share</button>
+                <button class="action-btn">❤️ Like</button>
+                <button class="action-btn comment-toggle">💬 Comment</button>
+                <button class="action-btn">↗️ Share</button>
+            </div>
+            <div class="comment-section">
+                <div class="comment-form">
+                    <input type="text" class="comment-input" placeholder="Write a comment...">
+                    <button class="post-btn">Post</button>
+                </div>
             </div>
         </div>
+        {% endfor %}
+    </main>
 
-        <div class="post">
-            <div class="post-author">Jane Smith</div>
-            <div class="post-content">
-                Exploring the hidden gems of Paris in my new travel blog. Who's been to Paris recently?
-            </div>
-            <div class="post-actions">
-                <button class="action-button like-button">👍 Like</button>
-                <button class="action-button">💬 Comment</button>
-                <button class="action-button">📤 Share</button>
-            </div>
-        </div>
+    {% if messages %}
+    {% for message in messages %}
+    <div class="error-toast {{ message.tags }}" id="errorToast">
+        {{ message }}
     </div>
+    {% endfor %}
+    {% endif %}
 
-    <div class="settings" id="settings-button">⚙️
-        <div class="settings-menu" id="settings-menu">
-            <button id="login-button">Login</button>
-            <button id="logout-button">Logout</button>
-        </div>
-    </div>
+    <a href="#" class="get-started">Get Started</a>
 
     <script>
-        // Toggle settings menu
-        const settingsButton = document.getElementById('settings-button');
-        const settingsMenu = document.getElementById('settings-menu');
-        let isSettingsOpen = false;
-
-        settingsButton.addEventListener('click', () => {
-            isSettingsOpen = !isSettingsOpen;
-            settingsMenu.style.display = isSettingsOpen ? 'block' : 'none';
+        // Dark mode toggle
+        const darkModeBtn = document.getElementById('darkModeBtn');
+        darkModeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            darkModeBtn.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
         });
 
-        // Close settings menu when clicking outside
-        document.addEventListener('click', (event) => {
-            if (!settingsButton.contains(event.target) && isSettingsOpen) {
-                isSettingsOpen = false;
-                settingsMenu.style.display = 'none';
-            }
-        });
-
-        // Like functionality
-        const likeButtons = document.querySelectorAll('.like-button');
-        likeButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                button.textContent = button.textContent.includes('Liked')
-                    ? '👍 Like'
-                    : '👍 Liked';
+        // Comment toggle
+        document.querySelectorAll('.comment-toggle').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const post = e.target.closest('.post');
+                const commentSection = post.querySelector('.comment-section');
+                commentSection.classList.toggle('active');
+                if (commentSection.classList.contains('active')) {
+                    commentSection.querySelector('input').focus();
+                }
             });
         });
 
-        // Login/Logout functionality (simulated)
-        const loginButton = document.getElementById('login-button');
-        const logoutButton = document.getElementById('logout-button');
-        let isLoggedIn = false;
-
-        loginButton.addEventListener('click', () => {
-            alert('Logged in successfully!');
-            isLoggedIn = true;
-            updateAuthButtons();
+        // Post comment
+        document.querySelectorAll('.post-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const input = e.target.previousElementSibling;
+                if (input.value.trim()) {
+                    showError(); // For demo purposes, show error
+                    input.value = '';
+                }
+            });
         });
 
-        logoutButton.addEventListener('click', () => {
-            alert('Logged out successfully!');
-            isLoggedIn = false;
-            updateAuthButtons();
-        });
-
-        function updateAuthButtons() {
-            loginButton.style.display = isLoggedIn ? 'none' : 'block';
-            logoutButton.style.display = isLoggedIn ? 'block' : 'none';
-        }
-
-        // Initialize auth buttons
-        updateAuthButtons();
-
-        // Search functionality (simulated)
-        const searchIcon = document.getElementById('search-icon');
-        searchIcon.addEventListener('click', () => {
-            const searchQuery = prompt('Enter your search query:');
-            if (searchQuery) {
-                alert(`Searching for: ${searchQuery}`);
-                // Here you would typically send the search query to a server
+        // Error toast demo
+        document.querySelectorAll('.action-btn').forEach(button => {
+            if (!button.classList.contains('comment-toggle')) {
+                button.addEventListener('click', showError);
             }
         });
 
-        // Notification functionality (simulated)
-        const notificationIcon = document.getElementById('notification-icon');
-        notificationIcon.addEventListener('click', () => {
-            alert('You have 3 new notifications!');
-            // Here you would typically fetch and display actual notifications
+        function showError() {
+            const toast = document.getElementById('errorToast');
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        // Notification demo
+        document.getElementById('notificationBtn').addEventListener('click', () => {
+            showError();
         });
     </script>
 </body>

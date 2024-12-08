@@ -30,7 +30,7 @@ class Content(models.Model):
 
 #models responsible for like activity.
 class Like(models.Model):
-    user = models.ForeignKey(User, on_delete = models.CASCADE,null=True,blank=True)
+    user = models.ForeignKey(User, on_delete = models.CASCADE,null=False,blank=False)
     content = models.ForeignKey(Content, on_delete=models.CASCADE, related_name='like')
     created_at = models.DateTimeField(auto_now_add=True)
 

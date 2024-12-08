@@ -32,7 +32,8 @@ urlpatterns = [
     path('logout/',log_out,name='logout'),
     path('forget-password/',forget_password.as_view(),name ='forget-password'),
     path('verify-otp/',Otpverfication.as_view(), name = 'verify-otp'),
-    path('reset-password/<username>/',ResetPassword.as_view(),name ='reset-password')
+    path('reset-password/<username>/',ResetPassword.as_view(),name ='reset-password'),
+    path('', SocialView.as_view(), name = 'Home'),
 ]
 
 if settings.DEBUG:

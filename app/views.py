@@ -4,6 +4,7 @@ from ssl import SSLSession
 from urllib import request
 from wsgiref.util import request_uri
 from django import template
+from django import views
 from django.http import HttpResponseNotAllowed, HttpResponseRedirect, QueryDict
 from django.shortcuts import get_object_or_404, render,redirect,HttpResponse
 from django.contrib.auth.models import User
@@ -43,7 +44,7 @@ class ContentView(LoginRequiredMixin,View):
     def get(self,request):
 
         # fetches the data from database
-        queryset = Content.objects.all() 
+        queryset = Content.objects.filter(user=request.user) 
 
         # Search option for content
         search_query = request.GET.get('search_re')
@@ -67,13 +68,12 @@ class ContentView(LoginRequiredMixin,View):
 
             # creating the objects in database
             Content.objects.create(
+                user= request.user,
                 title=title,
                 description=description,
             )
 
-            print(
-                f'Title: {title}\n Description: {description}\n'
-            )
+            messages.success(request,"Post created.")
 
 
             return redirect('/user-site')
@@ -114,6 +114,7 @@ class Update_View(LoginRequiredMixin,View):
             queryset.title = title
             queryset.description = description
             queryset.save()
+            messages.warning(request,'Thoughts has been changed')
 
             return redirect('user-site') 
         
@@ -124,7 +125,6 @@ def delete_page(request,id):
     queryset = Content.objects.get(id=id)
     queryset.delete()
     messages.success(request,"Thoughts has been deleted permanently")  
-
     return redirect('user-site')
 
 
@@ -164,7 +164,7 @@ class Loginpage(View):
                 #default behaviour 
                 request.session.set_expiry(0)
                 
-            return redirect('user-site')  # Redirect to user-site on successful login
+            return redirect('/')  
         else:
             messages.error(request, "Invalid Username or Password")
         
@@ -381,8 +381,57 @@ class ResetPassword(View):
 
         return redirect('login-page',)
 
-# making the social interface for the user to interact with the usercreated content
+
+class SocialView(LoginRequiredMixin,View):
+    """
+    This CBV is responsible for the social interface: User Interaction Environment
+    """
+
+    template_name = 'social.html'
+    login_url= 'login-page'
+    redirect_field_name='user'
+
+    def get(self, request):
+        """
+        Render the Web page and fetch the data
+        """
+        # Start with all content
+        queryset = Content.objects.all()
+
+        # Search functionality where user can search the username
+        search_params = request.GET.get('search_me')
+
+        if search_params:  # If a search query exists
+            # Filter users by username
+            users = User.objects.filter(username__icontains=search_params)
+            queryset = Content.objects.filter(user__in=users)
+
+
+        # Pass the filtered or default content to the template
+        context = {'content': queryset}
+        return render(request, self.template_name, context)
+    
+    def post(self,request):
+        """
+        Handle the POST req: especially manage the comment and like section
+        """
+        data = request.POST
+
+        comm = data.get('comment')
+
+        Comment.objects.create(
+
+            comment = comm,
+            
+            )
         
+        return redirect('')
+    
+
+
+
+        
+
 
 
 
