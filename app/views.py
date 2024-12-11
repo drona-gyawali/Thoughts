@@ -73,11 +73,12 @@ class ContentView(LoginRequiredMixin,View):
                 description=description,
             )
 
-            messages.success(request,"Post created.")
+            messages.success(request,"Content created.")
 
 
             return redirect('/user-site')
-        
+
+
 
 # class Update_View is responsible for editing the content that is already created in class ContentView: Handle get & post request
 class Update_View(LoginRequiredMixin,View):
@@ -114,9 +115,11 @@ class Update_View(LoginRequiredMixin,View):
             queryset.title = title
             queryset.description = description
             queryset.save()
-            messages.warning(request,'Thoughts has been changed')
+            messages.success(request,'Content Edited')
 
             return redirect('user-site') 
+
+
         
 # delete_page  is responsible for deleting the content from database compltely : Handle post request
 @login_required(login_url='user-site')
@@ -124,7 +127,7 @@ def delete_page(request,id):
 
     queryset = Content.objects.get(id=id)
     queryset.delete()
-    messages.success(request,"Thoughts has been deleted permanently")  
+    messages.warning(request,"Content Deleted")  
     return redirect('user-site')
 
 
@@ -197,6 +200,7 @@ class SignUp(View):
         password = data.get("password")
         confirm_password = data.get("confirm_password")
         email = data.get("email")
+        image = request.FILES.get('profile_image')
 
         # Check if the user already exists
         if User.objects.filter(username=username).exists():
@@ -207,18 +211,27 @@ class SignUp(View):
         if password != confirm_password:
             messages.error(request, "Passwords do not match.")
             return render(request, 'sign-up.html')
+      
 
         # Create the user if all validations pass
         user = User.objects.create(
             first_name=firstname,  
             last_name=lastname,    
             username=username,
-            email=email
+            email=email,
         )
         
         # Hash the password and save the user
         user.set_password(password)
         user.save()
+
+        if not hasattr(user, 'profile'):
+            profile = Profile.objects.create(user=user)
+
+        # Now, update the profile image if provided
+        if image:
+            profile.image = image
+            profile.save()
 
         messages.success(request, "User created successfully.")
         return redirect('login-page')
@@ -406,9 +419,9 @@ class SocialView(LoginRequiredMixin,View):
             users = User.objects.filter(username__icontains=search_params)
             queryset = Content.objects.filter(user__in=users)
 
-
+        user = User.objects.all()
         # Pass the filtered or default content to the template
-        context = {'content': queryset}
+        context = {'content': queryset, 'users':user}
         return render(request, self.template_name, context)
     
     def post(self,request):
@@ -426,7 +439,14 @@ class SocialView(LoginRequiredMixin,View):
             )
         
         return redirect('')
-    
+
+
+
+
+
+
+
+
 
 
 

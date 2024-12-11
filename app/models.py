@@ -4,8 +4,6 @@ from django.contrib.auth.models import User
 from django.db import models
 import os
 from django.db.models import UniqueConstraint
-
-
 """
 This models.py is consist of the operation related to the database.
 
@@ -26,7 +24,15 @@ class Content(models.Model):
 
     def __str__(self) -> str:
         return f'Title: {self.title}'
-    
+
+class Profile(models.Model):
+    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    image = models.ImageField(upload_to ='profile_images/%Y/%m/%d/',default = 'profile_images\2024\12\10\default.jpg',null =True, blank = True)
+
+    def __str__(self):
+        return f"{self.user.username}'s Profile"
+
+
 
 #models responsible for like activity.
 class Like(models.Model):

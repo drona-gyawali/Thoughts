@@ -107,6 +107,7 @@
             padding: 0.5rem;
             border-radius: 50%;
             color: inherit;
+            position: relative;
         }
 
         .icon-btn:hover {
@@ -114,6 +115,63 @@
         }
 
         .dark-mode .icon-btn:hover {
+            background-color: #374151;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: #ef4444;
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.125rem 0.375rem;
+            border-radius: 9999px;
+            transform: translate(50%, -50%);
+        }
+
+        .notifications-panel {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 320px;
+            background-color: var(--bg-light);
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            margin-top: 0.5rem;
+            display: none;
+            z-index: 1000;
+        }
+
+        .dark-mode .notifications-panel {
+            background-color: #1f2937;
+            border-color: #374151;
+        }
+
+        .notifications-panel.active {
+            display: block;
+        }
+
+        .notification-item {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            cursor: pointer;
+        }
+
+        .dark-mode .notification-item {
+            border-color: #374151;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-item:hover {
+            background-color: #f3f4f6;
+        }
+
+        .dark-mode .notification-item:hover {
             background-color: #374151;
         }
 
@@ -189,10 +247,48 @@
         .comment-section {
             margin-top: 1rem;
             display: none;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 1rem;
+        }
+
+        .dark-mode .comment-section {
+            border-color: #374151;
         }
 
         .comment-section.active {
             display: block;
+        }
+
+        .comment-list {
+            margin-bottom: 1rem;
+        }
+
+        .comment {
+            display: flex;
+            gap: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            margin-bottom: 0.5rem;
+            background-color: #f9fafb;
+        }
+
+        .dark-mode .comment {
+            background-color: #374151;
+        }
+
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+
+        .comment-author {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
         }
 
         .comment-form {
@@ -267,6 +363,22 @@
             font-weight: bold;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
+
+        .logout-btn {
+            background-color: #ef4444;
+            color: white;
+            text-decoration: none;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .logout-btn:hover {
+            opacity: 0.9;
+        }
     </style>
 </head>
 
@@ -283,23 +395,42 @@
             <div class="header-actions">
                 <button class="icon-btn" id="notificationBtn" title="Notifications">
                     🔔
+                    <span class="notification-badge">3</span>
+                    <div class="notifications-panel" id="notificationsPanel">
+                        <div class="notification-item">
+                            <strong>John Doe</strong> liked your post
+                            <small>2 minutes ago</small>
+                        </div>
+                        <div class="notification-item">
+                            <strong>Jane Smith</strong> commented on your post
+                            <small>5 minutes ago</small>
+                        </div>
+                        <div class="notification-item">
+                            <strong>Mike Johnson</strong> started following you
+                            <small>10 minutes ago</small>
+                        </div>
+                    </div>
                 </button>
                 <button class="icon-btn" id="darkModeBtn" title="Toggle dark mode">
                     🌙
                 </button>
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
             </div>
         </div>
     </header>
 
     <main class="main-content">
-        {%for i in content %}
+        {% for i in content %}
         <div class="post">
             <div class="post-header">
-                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&h=80"
-                    alt="User Avatar" class="avatar">
+                {% if i.user.profile.image %}
+                <img src="{{i.user.profile.image.url}}" alt="User Avatar" class="avatar">
+                {% else %}
+                <img src="media/profile_images/2024/12/10/default.jpg" alt="Default Avatar" class="avatar">
+                {% endif %}
                 <div>
-                    <h3>John Doe</h3>
-                    <small>2 hours ago</small>
+                    <h3>{{i.user.username}}</h3>
+                    <small>{{ i.created_at|timesince }} ago</small>
                 </div>
             </div>
             <div class="post-content">
@@ -311,10 +442,32 @@
                 <button class="action-btn">↗️ Share</button>
             </div>
             <div class="comment-section">
-                <div class="comment-form">
-                    <input type="text" class="comment-input" placeholder="Write a comment...">
-                    <button class="post-btn">Post</button>
+                <div class="comment-list">
+                    <!-- Placeholder for comments -->
+                    <div class="comment">
+                        <img src="media/profile_images/2024/12/10/default.jpg" alt="Commenter Avatar"
+                            class="comment-avatar">
+                        <div class="comment-content">
+                            <div class="comment-author">John Doe</div>
+                            <div>Great post! Thanks for sharing.</div>
+                        </div>
+                    </div>
+                    <div class="comment">
+                        <img src="media/profile_images/2024/12/10/default.jpg" alt="Commenter Avatar"
+                            class="comment-avatar">
+                        <div class="comment-content">
+                            <div class="comment-author">Jane Smith</div>
+                            <div>This is really interesting!</div>
+                        </div>
+                    </div>
                 </div>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="comment-form">
+                        <input type="text" class="comment-input" name="comment" placeholder="Write a comment...">
+                        <button class="post-btn">Post</button>
+                    </div>
+                </form>
             </div>
         </div>
         {% endfor %}
@@ -328,7 +481,7 @@
     {% endfor %}
     {% endif %}
 
-    <a href="#" class="get-started">Get Started</a>
+    <a href="user-site" class="get-started">Create Post</a>
 
     <script>
         // Dark mode toggle
@@ -336,6 +489,27 @@
         darkModeBtn.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
             darkModeBtn.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+        });
+
+        // Notifications panel toggle
+        const notificationBtn = document.getElementById('notificationBtn');
+        const notificationsPanel = document.getElementById('notificationsPanel');
+
+        notificationBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            notificationsPanel.classList.toggle('active');
+            // Clear notification badge when opened
+            const badge = notificationBtn.querySelector('.notification-badge');
+            if (badge) {
+                badge.style.display = 'none';
+            }
+        });
+
+        // Close notifications panel when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!notificationBtn.contains(e.target)) {
+                notificationsPanel.classList.remove('active');
+            }
         });
 
         // Comment toggle
@@ -355,30 +529,29 @@
             button.addEventListener('click', (e) => {
                 const input = e.target.previousElementSibling;
                 if (input.value.trim()) {
-                    showError(); // For demo purposes, show error
+                    showError('Comment functionality will be implemented with backend integration');
                     input.value = '';
                 }
             });
         });
 
-        // Error toast demo
-        document.querySelectorAll('.action-btn').forEach(button => {
-            if (!button.classList.contains('comment-toggle')) {
-                button.addEventListener('click', showError);
-            }
-        });
-
-        function showError() {
+        // Error toast
+        function showError(message = 'This feature will be implemented with backend integration') {
             const toast = document.getElementById('errorToast');
+            toast.textContent = message;
             toast.style.display = 'block';
             setTimeout(() => {
                 toast.style.display = 'none';
             }, 3000);
         }
 
-        // Notification demo
-        document.getElementById('notificationBtn').addEventListener('click', () => {
-            showError();
+        // Action buttons demo
+        document.querySelectorAll('.action-btn').forEach(button => {
+            if (!button.classList.contains('comment-toggle')) {
+                button.addEventListener('click', () => {
+                    showError();
+                });
+            }
         });
     </script>
 </body>

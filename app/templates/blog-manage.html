@@ -66,7 +66,7 @@
             top: 1rem;
             right: 1rem;
             z-index: 1000;
-            width: 300px;
+            width: 190px;
         }
 
         .alert {
@@ -347,14 +347,50 @@
             background: var(--bg-card-dark);
             border-color: var(--border-dark);
         }
+
+        .homebutton {
+            right: 200px;
+            width: 125px;
+            padding-top: 20px;
+            padding-right: 20px;
+            position: fixed;
+            z-index: 2;
+        }
+
+        .homebutton a {
+
+            position: fixed;
+            top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-card-light);
+            color: var(--text-light);
+            border-radius: 0.5rem;
+            text-decoration: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .dark-mode.homebutton a {
+            background: var(--bg-card-dark);
+            color: var(--text-dark);
+
+        }
     </style>
 </head>
+<div class="homebutton a">
+    <a href="/">Home</a>
+</div>
 
 <body>
     <button class="theme-toggle" id="themeToggle">
         <span class="theme-icon">🌙</span>
         <span class="theme-text">Dark Mode</span>
     </button>
+
+
 
     <a href="/logout" class="logout-btn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -366,12 +402,23 @@
 
     <div class="messages">
         {% if user.is_authenticated %}
+        {% now "H" as current_hour %}
+
         <div class="alert">
             <div class="alert-content">
                 <svg class="alert-icon" fill="none" stroke="#22c55e" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
-                <p>Welcome back, {{ user.username }}!</p>
+
+                {% if current_hour|floatformat:0 >= 5 and current_hour|floatformat:0 < 12 %} <p>Good Morning, {{
+                    user.username }}</p>
+                    {% elif current_hour|floatformat:0 >= 12 and current_hour|floatformat:0 < 17 %} <p>Good Afternoon,
+                        {{ user.username }}</p>
+                        {% elif current_hour|floatformat:0 >= 17 and current_hour|floatformat:0 < 21 %} <p>Good Evening,
+                            {{ user.username }}</p>
+                            {% else %}
+                            <p>Good Night, {{ user.username }}</p>
+                            {% endif %}
             </div>
         </div>
         {% endif %}

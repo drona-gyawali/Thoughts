@@ -4,52 +4,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog Signup</title>
+    <title>Join Our Community</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 2rem;
         }
 
         .signup-container {
-            background: white;
-            padding: 2.5rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 24px;
+            overflow: hidden;
             width: 100%;
-            max-width: 400px;
-            transform: translateY(0);
-            transition: transform 0.3s ease;
+            max-width: 1200px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
         }
 
-        .signup-container:hover {
-            transform: translateY(-5px);
+        .signup-form {
+            padding: 3rem;
+            position: relative;
+        }
+
+        .signup-image {
+            background: linear-gradient(rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8)),
+                url('https://images.unsplash.com/photo-1579389083046-e3df9c2b3325?auto=format&fit=crop&w=800');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 3rem;
+            color: white;
+            position: relative;
+        }
+
+        .signup-image h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .signup-image p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            line-height: 1.6;
         }
 
         .signup-header {
-            text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
         }
 
         .signup-header h1 {
-            color: #2c3e50;
+            color: #1a1a1a;
             font-size: 2rem;
             margin-bottom: 0.5rem;
+            font-weight: 700;
         }
 
         .signup-header p {
-            color: #7f8c8d;
-            font-size: 0.9rem;
+            color: #666;
+            font-size: 1rem;
         }
 
         .form-group {
@@ -59,22 +87,25 @@
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
-            color: #2c3e50;
+            color: #374151;
             font-weight: 500;
+            font-size: 0.9rem;
         }
 
-        .form-group input {
+        .form-group input:not([type="file"]) {
             width: 100%;
-            padding: 0.8rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
             font-size: 1rem;
-            transition: border-color 0.3s ease;
+            transition: all 0.3s ease;
+            background: white;
         }
 
         .form-group input:focus {
             outline: none;
-            border-color: #3498db;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         .name-group {
@@ -83,32 +114,71 @@
             gap: 1rem;
         }
 
+        .profile-upload {
+            background: #f9fafb;
+            border: 2px dashed #e5e7eb;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-upload:hover {
+            border-color: #667eea;
+            background: #f3f4f6;
+        }
+
+        .profile-upload-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 1rem;
+            color: #667eea;
+        }
+
+        .profile-upload input[type="file"] {
+            display: none;
+        }
+
+        .profile-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 60px;
+            margin: 1rem auto;
+            display: none;
+            object-fit: cover;
+            border: 4px solid white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
         .signup-button {
             width: 100%;
             padding: 1rem;
-            background: #3498db;
+            background: #667eea;
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
             margin-top: 1rem;
         }
 
         .signup-button:hover {
-            background: #2980b9;
+            background: #5a67d8;
+            transform: translateY(-1px);
         }
 
         .login-link {
             text-align: center;
             margin-top: 1.5rem;
-            color: #7f8c8d;
+            color: #6b7280;
         }
 
         .login-link a {
-            color: #3498db;
+            color: #667eea;
             text-decoration: none;
             font-weight: 500;
         }
@@ -117,13 +187,6 @@
             text-decoration: underline;
         }
 
-        .password-strength {
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
-            color: #7f8c8d;
-        }
-
-        /* Error Message Styles */
         .messages {
             list-style: none;
             margin-bottom: 1.5rem;
@@ -132,7 +195,7 @@
 
         .message {
             padding: 1rem;
-            border-radius: 8px;
+            border-radius: 12px;
             margin-bottom: 0.5rem;
             font-size: 0.9rem;
             animation: slideIn 0.3s ease-out;
@@ -174,10 +237,23 @@
             }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 968px) {
             .signup-container {
-                margin: 1rem;
-                padding: 1.5rem;
+                grid-template-columns: 1fr;
+            }
+
+            .signup-image {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 1rem;
+            }
+
+            .signup-form {
+                padding: 2rem;
             }
 
             .name-group {
@@ -189,52 +265,102 @@
 
 <body>
     <div class="signup-container">
-        <!-- Error Messages Container -->
-        <ul class="messages">
-            {% for message in messages%}
-            <li class="message {{message.tags}}">{{message}}</li>
-            {% endfor %}
-        </ul>
+        <div class="signup-form">
+            <ul class="messages">
+                {% for message in messages %}
+                <li class="message {{message.tags}}">{{message}}</li>
+                {% endfor %}
+            </ul>
 
-        <div class="signup-header">
-            <h1>Create Account</h1>
-            <p>Join our thoughts community today</p>
+            <div class="signup-header">
+                <h1>Create Account</h1>
+                <p>Join our vibrant community of thinkers and creators</p>
+            </div>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="profile-upload" id="profileUpload">
+                    <svg class="profile-upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                        </path>
+                    </svg>
+                    <p>Click to upload profile picture</p>
+                    <img id="imagePreview" class="profile-preview" alt="Profile preview">
+                    <input type="file" name="profile_image" id="profileInput" accept="image/*">
+                </div>
+
+                <div class="name-group">
+                    <div class="form-group">
+                        <label for="firstname">First Name</label>
+                        <input type="text" id="firstname" name="firstname" placeholder="Enter first name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname">Last Name</label>
+                        <input type="text" id="lastname" name="lastname" placeholder="Enter last name" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Choose a username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Create a password" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm_password"
+                        placeholder="Confirm your password" required>
+                </div>
+
+                <button type="submit" class="signup-button">Create Account</button>
+
+                <div class="login-link">
+                    Already have an account? <a href="/login-page">Log in</a>
+                </div>
+            </form>
         </div>
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="name-group">
-                <div class="form-group">
-                    <label for="firstname">First Name</label>
-                    <input type="text" name="firstname" placeholder="Enter first name" required>
-                </div>
-                <div class="form-group">
-                    <label for="lastname">Last Name</label>
-                    <input type="text" name="lastname" placeholder="Enter last name" required>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" name="username" placeholder="Choose a username" required>
-            </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" name="email" placeholder="Enter email" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" name="password" placeholder="Create a password" required>
-                <div class="password-strength">Password must be at least 8 characters long</div>
-            </div>
-            <div class="form-group">
-                <label for="confirm-password">Confirm Password</label>
-                <input type="password" name="confirm_password" placeholder="Confirm your password" required>
-            </div>
-            <button type="submit" class="signup-button">Create Account</button>
-            <div class="login-link">
-                Already have an account? <a href="/login-page">Log in</a>
-            </div>
-        </form>
+
+        <div class="signup-image">
+            <h2>Welcome to Our Community</h2>
+            <p>Join thousands of creative minds sharing ideas and inspiring each other every day.</p>
+        </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const profileUpload = document.getElementById('profileUpload');
+            const profileInput = document.getElementById('profileInput');
+            const imagePreview = document.getElementById('imagePreview');
+
+            profileUpload.addEventListener('click', function () {
+                profileInput.click();
+            });
+
+            profileInput.addEventListener('change', function () {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        imagePreview.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
