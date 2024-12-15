@@ -50,7 +50,7 @@ class Like(models.Model):
 #model responsible for comment activity.
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
-    content = models.ForeignKey(Content, on_delete = models. CASCADE)
+    content = models.ForeignKey(Content, on_delete = models. CASCADE,related_name = 'comment')
     comment = models.CharField(max_length = 500)
     created_at = models.DateTimeField(auto_now_add = True)
 

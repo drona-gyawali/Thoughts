@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thoughts - Social Platform</title>
     <style>
+        * {
+            text-decoration: none;
+        }
+
         :root {
             --primary: #4f46e5;
             --bg-light: #ffffff;
@@ -61,6 +65,7 @@
             font-size: 1.5rem;
             font-weight: bold;
             color: var(--primary);
+
         }
 
         .search-bar {
@@ -385,7 +390,7 @@
 <body>
     <header class="header">
         <div class="header-content">
-            <div class="logo">Thoughts</div>
+            <div class="logo"><a href="/">Thoughts</a></div>
             <form>
                 <div class="search-bar">
                     <span class="search-icon">🔍</span>
@@ -445,30 +450,29 @@
                 <div class="comment-list">
                     <!-- Placeholder for comments -->
                     <div class="comment">
-                        <img src="media/profile_images/2024/12/10/default.jpg" alt="Commenter Avatar"
-                            class="comment-avatar">
+                        {% for person in i.comment.all|dictsortreversed:"created_at" %}
+                        <img src="{% if person.user.profile.image %}{{ person.user.profile.image.url }}{% else %}media/profile_images/2024/12/10/default.jpg{% endif %}"
+                            alt="Commenter Avatar" class="comment-avatar">
                         <div class="comment-content">
-                            <div class="comment-author">John Doe</div>
-                            <div>Great post! Thanks for sharing.</div>
+                            <div class="comment-author">{{ person.user.username }}</div>
+                            <div>{{ person.comment }}</div>
                         </div>
                     </div>
-                    <div class="comment">
-                        <img src="media/profile_images/2024/12/10/default.jpg" alt="Commenter Avatar"
-                            class="comment-avatar">
-                        <div class="comment-content">
-                            <div class="comment-author">Jane Smith</div>
-                            <div>This is really interesting!</div>
-                        </div>
-                    </div>
+                    {% endfor %}
+
                 </div>
-                <form method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <div class="comment-form">
-                        <input type="text" class="comment-input" name="comment" placeholder="Write a comment...">
-                        <button class="post-btn">Post</button>
-                    </div>
-                </form>
+
             </div>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="comment-form">
+                    <input type="hidden" name="content_id" value="{{i.id}}">
+                    <input type="text" class="comment-input" name="comment" placeholder="Write a comment..." required>
+                    <button class="post-btn">Post</button>
+                </div>
+            </form>
+        </div>
+
         </div>
         {% endfor %}
     </main>
@@ -525,18 +529,9 @@
         });
 
         // Post comment
-        document.querySelectorAll('.post-btn').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const input = e.target.previousElementSibling;
-                if (input.value.trim()) {
-                    showError('Comment functionality will be implemented with backend integration');
-                    input.value = '';
-                }
-            });
-        });
-
         // Error toast
-        function showError(message = 'This feature will be implemented with backend integration') {
+        function showError(message = '') {
+            if (!message) return;  // If no message is provided, do nothing
             const toast = document.getElementById('errorToast');
             toast.textContent = message;
             toast.style.display = 'block';

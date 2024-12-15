@@ -125,7 +125,7 @@
         </div>
         <h1 class="error-text">404</h1>
         <p class="message">Houston, we have a problem! This page is lost in space.</p>
-        <button class="home-button" onclick="window.location.href='/'">Return to Earth</button>
+        <button class="home-button" id="redirectButton">Return to Earth</button>
     </div>
 
     <script>
@@ -181,6 +181,15 @@
                 star.remove();
             }, 1500);
         });
+
+        // JavaScript to redirect after 1 second delay
+        setTimeout(function () {
+            {% if request.user.is_authenticated %}
+            window.location.href = "/";  // Redirect to home for logged-in users
+            {% else %}
+            window.location.href = "{% url 'login-page' %}";  // Redirect to login page
+            {% endif %}
+        }, 5000);  // 1 second delay
     </script>
 </body>
 

@@ -125,10 +125,13 @@ class Update_View(LoginRequiredMixin,View):
 @login_required(login_url='user-site')
 def delete_page(request,id):
 
-    queryset = Content.objects.get(id=id)
-    queryset.delete()
-    messages.warning(request,"Content Deleted")  
-    return redirect('user-site')
+    try:
+        queryset = Content.objects.get(id=id)
+        queryset.delete()
+        messages.warning(request,"Content Deleted")
+        return redirect('user-site')
+    except Content.DoesNotExist:
+        return redirect('user-site')
 
 
 # login_page is responsible for logging the user : Handle post request
@@ -408,8 +411,9 @@ class SocialView(LoginRequiredMixin,View):
         """
         Render the Web page and fetch the data
         """
-        # Start with all content
-        queryset = Content.objects.all()
+        # Fetching the content by latest date.
+        queryset = Content.objects.all().order_by('-created_at')
+
 
         # Search functionality where user can search the username
         search_params = request.GET.get('search_me')
@@ -426,34 +430,51 @@ class SocialView(LoginRequiredMixin,View):
     
     def post(self,request):
         """
-        Handle the POST req: especially manage the comment and like section
+        Handle the POST for comments
         """
-        data = request.POST
 
-        comm = data.get('comment')
-
-        Comment.objects.create(
-
-            comment = comm,
+        if request.method == "POST":
+            data = request.POST
+            # hidden id request to know post refrence
+            try:
+                content_id = data.get('content_id')
+                # finding the post by its id
+                content = Content.objects.get(id = content_id)
+            except content.DoesNotExist:
+                messages.error(request, 'Content is not anymore.')
+                return redirect('/')
             
-            )
-        
-        return redirect('')
 
+            # Getting the comment from the text
+            comment = data.get('comment')
 
+            try:
+                new_comment = Comment.objects.create(
 
+                    comment=comment,
+                    user = request.user,
+                    content=content
 
+                )
+                
+                messages.success(request,'Comment created.')
+                return redirect('/')
+            except new_comment.DoesNotExist:
+                new_comment.delete()
+                messages.error(request,"Something went wrong.")
 
+    
+# # fx to handle 404 error in the app
+def page_not_found(request,exception):
+    """
+    Fx that handles Non-existent page Request.
+    """
 
+    template_name='404.html'
+    status = 404
 
-
-
-
-
-        
-
-
-
+    # first render the 404 page
+    return render(request,template_name,status=status)
 
 
 

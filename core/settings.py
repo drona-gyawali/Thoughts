@@ -39,7 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
-EXTERNAL_APPS = ['app']
+EXTERNAL_APPS = [
+    'app',
+    'channels',
+]
 
 INSTALLED_APPS += EXTERNAL_APPS
 
@@ -71,7 +74,9 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = 'core.asgi.application'
 WSGI_APPLICATION = 'core.wsgi.application'
+
 
 
 # Database
@@ -138,4 +143,20 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'dronarajgyawali@gmail.com'
-EMAIL_HOST_PASSWORD = 'xxxxx'
+EMAIL_HOST_PASSWORD = 'goagbxcoizydbjjn'
+
+
+
+# What Does This Do?
+# Enables WebSocket Support: This setup allows Django Channels to manage WebSocket connections.
+# Uses Redis: Redis acts as a broker to handle real-time messages and distribute them between servers or clients.
+# Local Redis Instance: The configuration points to a local Redis server running on port 6379.
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
+
