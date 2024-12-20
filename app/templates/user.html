@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ profile_user.username }} | Profile</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg-color: #ffffff;
+            --text-color: #334155;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --hover: #f8fafc;
+        }
+
+        .dark-mode {
+            --bg-color: #0f172a;
+            --text-color: #e2e8f0;
+            --card-bg: #1e293b;
+            --border: #334155;
+            --hover: #1e293b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-image-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary);
+        }
+
+        .edit-profile-image {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: var(--primary);
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .username {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .bio-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .bio {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            opacity: 0.9;
+            margin-bottom: 1rem;
+            white-space: pre-wrap;
+        }
+
+        .edit-bio {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .stats {
+            display: flex;
+            gap: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .post-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .post-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .post-image {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .post-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .post-content {
+            padding: 1.5rem;
+        }
+
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .post-date {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .action-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .action-button:hover {
+            opacity: 1;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary);
+            border: none;
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .profile-header {
+                padding: 1.5rem;
+            }
+
+            .stats {
+                gap: 1rem;
+            }
+
+            .posts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="profile-header">
+            <div class="profile-image-container">
+
+                <img src="{{ profile_user.profile.image.url }}" alt="Profile" class="profile-image">
+
+                {% if request.user == profile_user %}
+                <button class="edit-profile-image" onclick="openImageModal()">📷</button>
+                {% endif %}
+            </div>
+
+            <h1 class="username">{{ profile_user.username }}</h1>
+
+
+            <div class="bio-container">
+                <p class="bio">{{ profile_user.profile.bio|default:"No bio yet..." }}</p>
+                {% if request.user == profile_user %}
+                <button class="edit-bio" onclick="openBioModal()">Edit Bio</button>
+                {% endif %}
+            </div>
+
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-value">{{ profile_user.followers.count }}</div>
+                    <div class="stat-label">Followers</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">{{ profile_user.following.count }}</div>
+                    <div class="stat-label">Following</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">{{postcount}}</div>
+                    <div class="stat-label">Posts</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="posts-grid">
+            {% if user %}
+            {% for post in user %}
+            <div class="post-card">
+                <!-- <div class="post-image">
+                    <img src="{{ i.user.profile.image.url }}" alt="Post image">
+                </div> -->
+
+                <div class="post-content">
+                    <div class="post-meta">
+                        <span class="post-date">{{ post.created_at|date:"M d, Y" }}</span>
+                        {% if request.user == profile_user %}
+                        <button class="action-button" onclick="deletePost('{{ post.id }}')">
+                            🗑️ Delete
+                        </button>
+                        {% endif %}
+                    </div>
+                    <p>{{ post.description }}</p>
+                    <div class="post-actions">
+                        <button class="action-button">
+                            ❤️ <span>{{profile_user.counts}}</span>
+                        </button>
+                        <button class="action-button">
+                            💬 <span>{{ post.comments.count }}</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
+                <p>No posts yet</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <button class="theme-toggle" id="themeToggle">🌓</button>
+
+    {% if request.user == profile_user %}
+    <!-- Bio Edit Modal -->
+    <div id="bioModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeBioModal()">×</button>
+            <h2 style="margin-bottom: 1rem;">Edit Bio</h2>
+            <form id="bioForm" method="POST">
+                {% csrf_token %}
+                <textarea name="bio"
+                    style="width: 100%; min-height: 120px; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; border: 1px solid var(--border);">{{ profile_user.profile.bio }}</textarea>
+                <button type="submit" class="edit-bio">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Profile Image Modal -->
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeImageModal()">×</button>
+            <h2 style="margin-bottom: 1rem;">Update Profile Picture</h2>
+            <form id="imageForm" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" name="image" accept="image/*" required style="margin-bottom: 1rem;">
+                <button type="submit" class="edit-bio">Upload Image</button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.documentElement;
+
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        if (isDarkMode) {
+            body.classList.add('dark-mode');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
+        });
+
+        {% if request.user == profile_user %}
+        // Modal functionality
+        const bioModal = document.getElementById('bioModal');
+        const imageModal = document.getElementById('imageModal');
+
+        function openBioModal() {
+            bioModal.style.display = 'flex';
+        }
+
+        function closeBioModal() {
+            bioModal.style.display = 'none';
+        }
+
+        function openImageModal() {
+            imageModal.style.display = 'flex';
+        }
+
+        function closeImageModal() {
+            imageModal.style.display = 'none';
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function (event) {
+            if (event.target === bioModal) {
+                closeBioModal();
+            }
+            if (event.target === imageModal) {
+                closeImageModal();
+            }
+        }
+
+        // Delete post functionality
+        function deletePost(postId) {
+            if (confirm('Are you sure you want to delete this post?')) {
+                fetch(`/delete-post/${postId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    },
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            window.location.reload();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Failed to delete post');
+                    });
+            }
+        }
+        {% endif %}
+    </script>
+</body>
+
+</html>

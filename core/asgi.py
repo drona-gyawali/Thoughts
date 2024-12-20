@@ -7,22 +7,19 @@ For more information on this file, see
 https://docs.djangoproject.com/en/5.1/howto/deployment/asgi/
 """
 
+import os
+from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
-from app.routing import websocket_urlpatterns
-from django.core.asgi import get_asgi_application
-import app.routing
-import os
+from . import routing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 
-
-# we have to handle both traditonal http and websocket request.
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
     "websocket": AuthMiddlewareStack(
         URLRouter(
-            app.routing.websocket_urlpatterns
+           routing.websocket_urlpatterns
         )
     ),
 })

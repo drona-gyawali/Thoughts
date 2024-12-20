@@ -10,6 +10,7 @@ from django.shortcuts import get_object_or_404, render,redirect,HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.urls import reverse
 from .models import *
 from django.contrib.auth import authenticate,login,logout
 from django.views import View
@@ -19,6 +20,12 @@ from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.conf import settings
 import time
+from django.http import JsonResponse
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
+import os
+from django.conf import settings
 
 
 
@@ -231,10 +238,16 @@ class SignUp(View):
         if not hasattr(user, 'profile'):
             profile = Profile.objects.create(user=user)
 
-        # Now, update the profile image if provided
+        # path of the default image 
+        default_image_path = os.path.join('profile_images', '2024', '12', '10', 'default.jpg')
+
+       # Now, update the profile image if provided
         if image:
             profile.image = image
             profile.save()
+        else:
+            profile.image = default_image_path
+            profile.save()        
 
         messages.success(request, "User created successfully.")
         return redirect('login-page')
@@ -409,7 +422,7 @@ class SocialView(LoginRequiredMixin,View):
 
     def get(self, request):
         """
-        Render the Web page and fetch the data
+        Render the Web page and fetch the data from server
         """
         # Fetching the content by latest date.
         queryset = Content.objects.all().order_by('-created_at')
@@ -424,8 +437,10 @@ class SocialView(LoginRequiredMixin,View):
             queryset = Content.objects.filter(user__in=users)
 
         user = User.objects.all()
+        # Notification showing logic 
+        notify = Notification.objects.filter(user= request.user)
         # Pass the filtered or default content to the template
-        context = {'content': queryset, 'users':user}
+        context = {'content': queryset, 'users':user,'notify':notify}
         return render(request, self.template_name, context)
     
     def post(self,request):
@@ -448,6 +463,7 @@ class SocialView(LoginRequiredMixin,View):
             # Getting the comment from the text
             comment = data.get('comment')
 
+            #comment logic
             try:
                 new_comment = Comment.objects.create(
 
@@ -456,7 +472,15 @@ class SocialView(LoginRequiredMixin,View):
                     content=content
 
                 )
-                
+                #Notification logic
+                Notification.objects.create(
+
+                    user = content.user,
+                    sender = request.user, 
+                    message = f"{request.user.username} commented on your post"
+                    
+                )
+     
                 messages.success(request,'Comment created.')
                 return redirect('/')
             except new_comment.DoesNotExist:
@@ -464,7 +488,7 @@ class SocialView(LoginRequiredMixin,View):
                 messages.error(request,"Something went wrong.")
 
     
-# # fx to handle 404 error in the app
+#  fx to handle 404 error in the app
 def page_not_found(request,exception):
     """
     Fx that handles Non-existent page Request.
@@ -475,6 +499,72 @@ def page_not_found(request,exception):
 
     # first render the 404 page
     return render(request,template_name,status=status)
+
+class UserProfile(View):
+    """
+    User profile logic where user can write and save their profile stuff.
+    """
+
+    template_name = 'user.html'
+
+    def get(self, request, id):
+        """Render user.html page with user data."""
+
+        # Fetching the data to show the content in webpage.
+        # profile_user this is crucial because it fetches the content and stats by user profile
+        profile_user = get_object_or_404(User,id = id)
+        content = Content.objects.filter(user=profile_user).order_by('-created_at')
+
+        # counting the user post.
+        post_count = Content.objects.filter(user=profile_user).count() or 0  
+
+        # passing the context to show the sever data into webpage
+        context = {'user': content,'profile_user':profile_user,'postcount':post_count}
+        return render(request, self.template_name, context)
+
+    def post(self, request, id):
+        """Handle the POST request and update the request of client."""
+        data = request.POST
+
+        # Deactivating the user profile with their requests.
+        if 'Deactivate' in data:
+            user = request.user
+            user.is_active = False  # Mark user as inactive
+            user.save()
+
+            logout(request)
+
+            messages.success(request, "Account has been deactivated.")
+            return redirect('login-page')
+        
+        # profile_user to track the id
+        profile_user = get_object_or_404(User,id = id)        
+
+        # fetch or create user profile details if not exists.        
+        profile, created = Profile.objects.get_or_create(user=profile_user)
+        
+        # Get the new profile data from the form
+        image = request.FILES.get('image')
+        bio = data.get('bio')
+        username = data.get('username')
+
+        # Update the profile if data is provided
+        if image:
+            profile.image = image
+        if bio:
+            profile.bio = bio
+        if username:
+            profile_user.username = username
+
+        # Save the updated profile
+        profile.save()
+        profile_user.save()
+
+        messages.success(request, "Profile has been updated.")
+
+        # Redirect back to the user's profile page
+        return redirect(reverse('profile', kwargs={'id': request.user.id}))
+
 
 
 

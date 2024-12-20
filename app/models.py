@@ -28,6 +28,7 @@ class Content(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE)
     image = models.ImageField(upload_to ='profile_images/%Y/%m/%d/',default = 'profile_images\2024\12\10\default.jpg',null =True, blank = True)
+    bio = models.TextField(max_length=100,null=True,blank = True)
 
     def __str__(self):
         return f"{self.user.username}'s Profile"
@@ -59,6 +60,14 @@ class Comment(models.Model):
         return f'Comment by {self.user.username} on {self.content.title}'
 
 
+# Notification models
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications")
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_notifications")
+    message = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
 
-
+    def __str__(self):
+        return f"Notification for {self.user.username}: {self.message}"
 

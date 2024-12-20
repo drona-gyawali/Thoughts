@@ -37,6 +37,7 @@ urlpatterns = [
     path('verify-otp/',Otpverfication.as_view(), name = 'verify-otp'),
     path('reset-password/<username>/',ResetPassword.as_view(),name ='reset-password'),
     path('', SocialView.as_view(), name = 'Home'),
+    path('profile/<int:id>/',UserProfile.as_view(),name = 'profile'),
 ]
 
 if settings.DEBUG:
