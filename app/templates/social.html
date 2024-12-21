@@ -464,7 +464,7 @@
                         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                         <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                     </svg>
-                    <span class="notification-badge">10</span>
+                    <span class="notification-badge">{{unread_count}}</span>
                     <!-- Notifications Panel -->
                     <div class="notifications-panel" id="notificationsPanel">
                         {% for notify in notify %}
@@ -475,7 +475,15 @@
                                 <div>
                                     <strong>{{notify.message}}</strong>
                                 </div>
-                                <div class="notification-time">{{ notify.created_at|date:"F j, H:i" }}</div>
+                                <div class="notification-time"> {% with notify.created_at|timesince as time_diff %}
+                                    {% if "hour" in time_diff %}
+                                    {{ time_diff|slice:":7" }} ago
+                                    {% elif "minute" in time_diff %}
+                                    Just now
+                                    {% else %}
+                                    {{ time_diff }} ago
+                                    {% endif %}
+                                    {% endwith %}</div>
                             </div>
                         </div>
                         {% empty %}

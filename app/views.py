@@ -1,3 +1,5 @@
+from datetime import timedelta 
+from django.utils import timezone
 from email import message
 import re
 from ssl import SSLSession
@@ -436,11 +438,29 @@ class SocialView(LoginRequiredMixin,View):
             users = User.objects.filter(username__icontains=search_params)
             queryset = Content.objects.filter(user__in=users)
 
+        # user related data
         user = User.objects.all()
+
+        # Deleting the Notifcation that is already read and has a timespan of 5 days.
+        now = timezone.now()
+        delete_count=Notification.objects.filter(user = request.user, 
+                                    is_read=True, 
+                                    created_at__lte = now - timedelta(days=5)).delete()
+        print(f'{delete_count} Notification has been deleted.')
+
         # Notification showing logic 
-        notify = Notification.objects.filter(user= request.user)
+        notify = Notification.objects.filter(user= request.user).order_by('-created_at')
+        unread_notification = Notification.objects.filter(user= request.user,is_read = False).count() or 0
+
         # Pass the filtered or default content to the template
-        context = {'content': queryset, 'users':user,'notify':notify}
+        context = {
+
+            'content': queryset, 
+            'users':user,
+            'notify':notify,
+            'unread_count': unread_notification
+
+            }
         return render(request, self.template_name, context)
     
     def post(self,request):
@@ -519,20 +539,33 @@ class UserProfile(View):
         post_count = Content.objects.filter(user=profile_user).count() or 0  
 
         # passing the context to show the sever data into webpage
-        context = {'user': content,'profile_user':profile_user,'postcount':post_count}
+        context = {
+
+                   'user': content,
+                   'profile_user':profile_user,
+                   'postcount':post_count
+                   
+                 }
         return render(request, self.template_name, context)
 
     def post(self, request, id):
         """Handle the POST request and update the request of client."""
         data = request.POST
 
-        # Deactivating the user profile with their requests.
+        # Deactivating the user profile with their permissions.
         if 'Deactivate' in data:
             user = request.user
             user.is_active = False  # Mark user as inactive
             user.save()
+            # automatically logout the user is choose to deactivate.
+            logout(request) 
 
-            logout(request)
+        # Reactive the user profile with their permissions
+        if 'Reactivate' in data:
+            user = request.user
+            user.is_active = True
+            user.save()
+
 
             messages.success(request, "Account has been deactivated.")
             return redirect('login-page')
