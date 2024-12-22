@@ -27,7 +27,7 @@ This project is currently under active development, and contributions are more t
 
 ### 1. Clone the Repository
 ```bash
- git clone https://github.com/drona-gyawali/Thoughts-A-projects-using-django..git
+ git clone https://github.com/your-username/Thoughts-A-projects-using-django..git
  cd core
 ```
 
