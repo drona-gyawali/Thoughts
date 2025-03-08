@@ -15,6 +15,7 @@ Welcome to **Thoughts** — a simple yet interesting social media platform built
   - User authentication
   - Post creation
   - Commenting system
+  - Notification System
 - **Upcoming Features:**
   - Real-time chat
   - Video call functionality
